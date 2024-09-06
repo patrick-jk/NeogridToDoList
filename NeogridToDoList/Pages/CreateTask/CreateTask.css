@@ -1,0 +1,12 @@
+﻿h2 {
+    padding-bottom: 30px;
+}
+
+select, input {
+    min-height: 40px;
+    border-radius: 10px;
+}
+
+.btnSave {
+    margin-bottom: 15px;
+}
