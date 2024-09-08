@@ -1,2 +1,14 @@
-﻿body {
+﻿h2 {
+    padding-bottom: 30px;
+}
+
+.btnCreateTask {
+    min-width: 180px;
+    font-size: 22px;
+    background: #ef021f;
+    border: none;
+}
+
+.btnCreateTask:hover {
+    background: #a40014;
 }

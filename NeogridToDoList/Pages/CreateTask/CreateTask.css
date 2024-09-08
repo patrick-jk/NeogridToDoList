@@ -3,8 +3,13 @@
 }
 
 select, input {
-    min-height: 40px;
+    min-height: 60px;
     border-radius: 10px;
+    font-size: 16px;
+}
+
+input[type=submit] {
+    font-size: 20px;
 }
 
 .btnSave {
