@@ -19,7 +19,7 @@ namespace Pages.CreateTask
             {
                 using (var db = new TaskDbContext())
                 {
-                    int? taskId = Request.QueryString["taskId"] != null ? int.Parse(Request.QueryString["taskId"]) : null;
+                    var taskId = Request.QueryString["taskId"] != null ? int.Parse(Request.QueryString["taskId"]) : (int?)null;
                     var taskTitle = txtTaskTitle.Text.Trim();
                     var taskDescription = txtTaskDescription.Text.Trim();
                     var priority = int.Parse(selectTaskPriority.SelectedValue);
@@ -32,9 +32,7 @@ namespace Pages.CreateTask
                         throw new DuplicateNameException();
                     }
 
-                    var task = taskId.HasValue
-                        ? db.Tasks.FirstOrDefault(t => t.Id == taskId)
-                        : new Task { CreatedAt = DateTime.Now };
+                    var task = taskId.HasValue ? db.Tasks.FirstOrDefault(t => t.Id == taskId) : new Task { CreatedAt = DateTime.Now };
 
                     if (task != null)
                     {
@@ -47,8 +45,8 @@ namespace Pages.CreateTask
 
                         db.SaveChanges();
 
-                        lblModalBody.Text =
-                            taskId.HasValue ? "Tarefa atualizada com sucesso!" : "Tarefa salva com sucesso.";
+                        if (taskId.HasValue) lblModalTitle.Text = "Atualizar Tarefa";
+                        lblModalBody.Text = taskId.HasValue ? "Tarefa atualizada com sucesso!" : "Tarefa salva com sucesso.";
                         hfOperationStatus.Value = "success";
 
                         if (!taskId.HasValue)
@@ -76,6 +74,8 @@ namespace Pages.CreateTask
 
         protected void BtnDeleteTask_Click(object sender, EventArgs e)
         {
+            lblModalTitle.Text = "Deletar Tarefa";
+
             try
             {
                 var taskId = int.Parse(Request.QueryString["taskId"]);
