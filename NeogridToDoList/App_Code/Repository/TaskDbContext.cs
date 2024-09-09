@@ -1,14 +1,17 @@
-using MySql.Data.EntityFramework;
-using MySql.Data.MySqlClient;
 using System.Data.Entity;
+using Domain;
+using MySql.Data.MySqlClient;
 
-[DbConfigurationType(typeof(MySqlConfiguration))]
-public class TaskDbContext : DbContext
+namespace Repository
 {
-    public TaskDbContext() : base("name=TaskDbConnection")
+    [DbConfigurationType(typeof(MySqlConfiguration))]
+    public class TaskDbContext : DbContext
     {
-        Database.SetInitializer(new CreateDatabaseIfNotExists<TaskDbContext>());
-    }
+        public TaskDbContext() : base("name=TaskDbConnection")
+        {
+            Database.SetInitializer(new CreateDatabaseIfNotExists<TaskDbContext>());
+        }
 
-    public DbSet<Task> Tasks { get; set; }
+        public DbSet<Task> Tasks { get; set; }
+    }
 }
