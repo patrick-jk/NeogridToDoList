@@ -4,60 +4,59 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.UI;
 using Domain;
-using log4net;
+using Microsoft.Ajax.Utilities;
 using Repository;
 
 namespace Pages.CreateTask
 {
     public partial class CreateTask : Page
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(CreateTask));
-
         protected void BtnCreateTask_Click(object sender, EventArgs e)
         {
+            if (hfValidationPassed.Value == "false") return;
+
             try
             {
                 using (var db = new TaskDbContext())
                 {
-                    var task = new Task
-                    {
-                        Title = txtTaskName.Text,
-                        Description = txtTaskDescription.Text,
-                        Priority = int.Parse(selectTaskPriority.SelectedValue),
-                        IsDone = false,
-                        CreatedAt = DateTime.Now
-                    };
+                    int? taskId = Request.QueryString["taskId"] != null ? int.Parse(Request.QueryString["taskId"]) : null;
+                    var taskTitle = txtTaskTitle.Text.Trim();
+                    var taskDescription = txtTaskDescription.Text.Trim();
+                    var priority = int.Parse(selectTaskPriority.SelectedValue);
+                    var existsDuplicate = db.Tasks.FirstOrDefault(t => t.Title == taskTitle && t.Id != taskId);
 
-                    if (Request.QueryString["taskId"] != null)
+                    if (existsDuplicate != null)
                     {
-                        var taskId = int.Parse(Request.QueryString["taskId"]);
-                        var oldTask = db.Tasks.FirstOrDefault(t => t.Id == taskId);
-                        if (oldTask != null)
-                        {
-                            oldTask.Title = txtTaskName.Text;
-                            oldTask.Description = txtTaskDescription.Text;
-                            oldTask.Priority = int.Parse(selectTaskPriority.SelectedValue);
-                            oldTask.IsDone = chkIsDone.Checked;
-                            db.SaveChanges();
-                            lblModalBody.Text = "Tarefa atualizada com sucesso!";
-                            hfOperationStatus.Value = "success";
-                        }
+                        lblModalBody.Text = $"A tarefa com nome {taskTitle} já existe! Por favor, insira outro nome.";
+                        hfOperationStatus.Value = "error";
+                        throw new DuplicateNameException();
                     }
-                    else
-                    {
-                        var existsDuplicate = db.Tasks.FirstOrDefault(t => t.Title == txtTaskName.Text);
-                        if (existsDuplicate != null)
-                        {
-                            lblModalBody.Text =
-                                $"A tarefa com nome {txtTaskName.Text} já existe! Por favor, insira outro nome.";
-                            hfOperationStatus.Value = "error";
-                            throw new DuplicateNameException();
-                        }
 
-                        db.Tasks.Add(task);
+                    var task = taskId.HasValue
+                        ? db.Tasks.FirstOrDefault(t => t.Id == taskId)
+                        : new Task { CreatedAt = DateTime.Now };
+
+                    if (task != null)
+                    {
+                        task.Title = taskTitle;
+                        task.Description = taskDescription;
+                        task.Priority = priority;
+                        task.IsDone = chkIsDone.Checked;
+
+                        if (!taskId.HasValue) db.Tasks.Add(task);
+
                         db.SaveChanges();
-                        lblModalBody.Text = "Tarefa salva com sucesso.";
+
+                        lblModalBody.Text =
+                            taskId.HasValue ? "Tarefa atualizada com sucesso!" : "Tarefa salva com sucesso.";
                         hfOperationStatus.Value = "success";
+
+                        if (!taskId.HasValue)
+                        {
+                            txtTaskTitle.Text = "";
+                            txtTaskDescription.Text = "";
+                            selectTaskPriority.SelectedValue = "null";
+                        }
                     }
                 }
             }
@@ -67,12 +66,12 @@ namespace Pages.CreateTask
                 lblModalBody.Text = "Erro ao salvar tarefa. Por favor, tente novamente mais tarde!";
                 hfOperationStatus.Value = "error";
             }
-            catch (DuplicateNameException duplicateNameException)
+            catch (DuplicateNameException)
             {
-                Debug.WriteLine($"The record '{txtTaskName.Text}' already exists.");
+                Debug.WriteLine($"The record '{txtTaskTitle.Text}' already exists.");
             }
 
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "afterClickModal", "showModal();", true);
+            ScriptManager.RegisterStartupScript(this, GetType(), "afterClickModal", "showModal();", true);
         }
 
         protected void BtnDeleteTask_Click(object sender, EventArgs e)
@@ -119,7 +118,7 @@ namespace Pages.CreateTask
             {
                 var task = db.Tasks.FirstOrDefault(t => t.Id == taskId);
                 if (task == null) return;
-                txtTaskName.Text = task.Title;
+                txtTaskTitle.Text = task.Title;
                 txtTaskDescription.Text = task.Description;
                 selectTaskPriority.SelectedValue = task.Priority.ToString();
                 chkIsDone.Checked = task.IsDone;

@@ -26,3 +26,14 @@
 .btnCreateTask:hover {
     background: #a40014;
 }
+
+input[type=checkbox] {
+    min-width: 16px;
+    min-height: 16px;
+}
+
+.searchTasks {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+}

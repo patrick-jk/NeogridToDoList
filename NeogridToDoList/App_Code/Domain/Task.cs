@@ -7,7 +7,6 @@ namespace Domain
     [Table("task")]
     public class Task
     {
-        [ScaffoldColumn(false)]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }

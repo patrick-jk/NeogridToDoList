@@ -16,7 +16,7 @@
 
 </head>
 <body style="background: #022032">
-    <form runat="server">
+    <form runat="server" id="rootForm" ClientIDMode="Static">
         <asp:ScriptManager runat="server">
             <Scripts>
                 <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
@@ -37,7 +37,7 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <div class="container body-content text-light">
+        <div class="container-fluid body-content text-light">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
         </div>

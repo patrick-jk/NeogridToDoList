@@ -43,25 +43,20 @@ public partial class Default : Page
 
     protected void chkIsDone_CheckedChanged(object sender, EventArgs e)
     {
-        CheckBox chkIsDone = (CheckBox)sender;
-        RepeaterItem item = (RepeaterItem)chkIsDone.NamingContainer;
-        HiddenField hfTaskId = (HiddenField)item.FindControl("hfTaskId");
+        var chkIsDone = (CheckBox)sender;
+        var item = (RepeaterItem)chkIsDone.NamingContainer;
+        var hfTaskId = (HiddenField)item.FindControl("hfTaskId");
 
-        int taskId = int.Parse(hfTaskId.Value);
-        bool isDone = chkIsDone.Checked;
+        var taskId = int.Parse(hfTaskId.Value);
+        var isDone = chkIsDone.Checked;
 
         using (var db = new TaskDbContext())
         {
             var task = db.Tasks.FirstOrDefault(t => t.Id == taskId);
-            if (task != null)
-            {
-                task.IsDone = isDone;
-                db.SaveChanges();
-            }
+            if (task == null) return;
+            task.IsDone = isDone;
+            db.SaveChanges();
         }
-
-        // Optionally, rebind the repeater to reflect changes
-        // BindRepeater();
     }
 
     protected void BtnTaskDetails_OnClick(object sender, EventArgs e)
@@ -76,13 +71,27 @@ public partial class Default : Page
         switch (priority)
         {
             case 1:
-                return "Baixa"; // Low
+                return "Baixa";
             case 2:
-                return "Média"; // Medium
+                return "Média";
             case 3:
-                return "Alta"; // High
+                return "Alta";
             default:
                 return "Desconhecida";
+        }
+    }
+
+    protected void searchTasks_OnTextChanged(object sender, EventArgs e)
+    {
+        var searchBox = (TextBox)sender;
+        var searchText = searchBox.Text.Trim().ToLower();
+
+        using (var db = new TaskDbContext())
+        {
+            var taskList = db.Tasks.Where(task => task.Title.ToLower().Contains(searchText)).ToList();
+
+            rptTasks.DataSource = taskList;
+            rptTasks.DataBind();
         }
     }
 }

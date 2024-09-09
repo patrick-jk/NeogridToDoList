@@ -26,8 +26,14 @@ input[type=checkbox] {
 
 .btnSave {
     margin-bottom: 20px;
+    font-size: 20px;
 }
 
 label {
     font-size: 18px;
+}
+
+.validation-label {
+    padding-top: 8px;
+    color: red;
 }
