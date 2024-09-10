@@ -19,10 +19,12 @@
 
 ### Execução 
 
+#### Recomendado clonar o repositório diretamente no Visual Studio!
+
 Após baixar esse repositório, abra o terminal dentro da pasta raiz dele, entre na pasta NeoGridToDoList e execute:
 > docker-compose up
 
-Feito isso, espere o banco de dados ser inicializado. Agora, abra o projeto no Visual Studio, certifique-se que possui o .NET Framework 4.8 e o IIS instalado.
+Feito isso, espere o banco de dados ser inicializado. Agora, abra o projeto no Visual Studio (caso não esteja aberto), certifique-se que possui o .NET Framework 4.8 e o IIS instalado.
 
 Feito isso, execute a aplicação através da IDE ou aperte F5.
 
