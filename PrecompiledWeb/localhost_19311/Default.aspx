@@ -1,7 +1,8 @@
-﻿<%@ Page Title="Neogrid To Do List" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
+﻿<%@ page title="Neogrid To Do List" language="C#" masterpagefile="~/Site.Master" autoeventwireup="true" inherits="Default, App_Web_v22zagxm" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link rel="stylesheet" href="/Content/Default.css"/>
+    <script type="text/javascript" src="/Scripts/Default.js"></script>
 
     <div class="jumbotron container-fluid text-center">
         <h2>To Do List</h2>
